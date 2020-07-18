@@ -1,0 +1,2 @@
+include ':app', ':uce_handler'
+rootProject.name = "LogMeWorker"
