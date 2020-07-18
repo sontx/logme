@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
 apply plugin: 'com.github.dcendents.android-maven'
-group='dev.sontx.logme'
+group='com.github.sontx'
 
 android {
     compileSdkVersion 30
