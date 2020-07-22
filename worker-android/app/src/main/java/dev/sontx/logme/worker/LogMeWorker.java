@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.rohitss.uceh.Callback;
-import com.rohitss.uceh.UCEDefaultActivity;
-import com.rohitss.uceh.UCEHandler;
+import dev.sontx.logme.worker.uce.Callback;
+import dev.sontx.logme.worker.uce.UCEDefaultActivity;
+import dev.sontx.logme.worker.uce.UCEHandler;
 
 public final class LogMeWorker implements Callback<Intent> {
     private static final String TAG = LogMeWorker.class.getName();

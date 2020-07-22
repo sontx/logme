@@ -15,7 +15,7 @@
  *  * limitations under the License.
  *
  */
-package com.rohitss.uceh;
+package dev.sontx.logme.worker.uce;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
