@@ -1,7 +1,9 @@
 package dev.sontx.logme.worker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.provider.Settings;
 import android.util.Log;
 
 import dev.sontx.logme.worker.uce.Callback;
@@ -17,10 +19,17 @@ public final class LogMeWorker implements Callback<Intent> {
     public LogMeWorker(Context context, String url) {
         this.context = context;
         String appName = UCEDefaultActivity.getApplicationName(context).replace(" ", "");
-        workerClient = new MqttIWorkerClient(appName, url, String.format("%s/logs", appName));
+        String clientId = getClientId(appName);
+        workerClient = new MqttIWorkerClient(context, appName, url, String.format("%s/logs", clientId));
         new UCEHandler.Builder(context)
                 .setHandleIntent(this)
                 .build();
+    }
+
+    private String getClientId(String appName) {
+        @SuppressLint("HardwareIds")
+        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+        return String.format("%s@%s", appName, androidId);
     }
 
     public void start() {
