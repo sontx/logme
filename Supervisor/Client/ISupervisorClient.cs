@@ -5,7 +5,9 @@ namespace Client
 {
     public interface ISupervisorClient
     {
-        Action<string> OnMessage { get; set; }
+        Action<string> OnLog { get; set; }
+        Action<string> OnException { get; set; }
+        Action<string> OnControlResponse { get; set; }
 
         Task StartAsync();
 

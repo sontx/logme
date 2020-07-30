@@ -91,7 +91,7 @@
             this.btnConnect.Enabled = false;
             this.btnConnect.Location = new System.Drawing.Point(437, 118);
             this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(86, 27);
+            this.btnConnect.Size = new System.Drawing.Size(86, 23);
             this.btnConnect.TabIndex = 2;
             this.btnConnect.Text = "Connect";
             this.btnConnect.UseVisualStyleBackColor = true;
@@ -108,7 +108,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(535, 157);
+            this.panel1.Size = new System.Drawing.Size(535, 155);
             this.panel1.TabIndex = 3;
             // 
             // btnClear
@@ -116,7 +116,7 @@
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnClear.Location = new System.Drawing.Point(345, 118);
             this.btnClear.Name = "btnClear";
-            this.btnClear.Size = new System.Drawing.Size(86, 27);
+            this.btnClear.Size = new System.Drawing.Size(86, 23);
             this.btnClear.TabIndex = 2;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
@@ -126,9 +126,9 @@
             // 
             this.panel2.Controls.Add(this.richTextBox1);
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(0, 157);
+            this.panel2.Location = new System.Drawing.Point(0, 155);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(535, 257);
+            this.panel2.Size = new System.Drawing.Size(535, 259);
             this.panel2.TabIndex = 4;
             // 
             // richTextBox1
@@ -139,7 +139,7 @@
             this.richTextBox1.Name = "richTextBox1";
             this.richTextBox1.ReadOnly = true;
             this.richTextBox1.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.richTextBox1.Size = new System.Drawing.Size(535, 257);
+            this.richTextBox1.Size = new System.Drawing.Size(535, 259);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;

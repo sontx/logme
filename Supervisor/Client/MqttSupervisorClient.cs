@@ -12,21 +12,27 @@ namespace Client
 {
     public class MqttSupervisorClient : ISupervisorClient, IConnectingFailedHandler, IMqttClientConnectedHandler, IMqttClientDisconnectedHandler
     {
-        public Action<string> OnMessage { get; set; }
+        public Action<string> OnLog { get; set; }
+        public Action<string> OnException { get; set; }
+        public Action<string> OnControlResponse { get; set; }
 
         private readonly string name;
         private readonly string url;
-        private readonly string topic;
+        private readonly string logTopic;
+        private readonly string exceptionTopic;
+        private readonly string controlTopic;
         private readonly ManualResetEvent startWaitEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent stopWaitEvent = new ManualResetEvent(false);
         private string connectingFailedReason;
         private IManagedMqttClient mqttClient;
 
-        public MqttSupervisorClient(string name, string url, string topic)
+        public MqttSupervisorClient(string name, string url)
         {
             this.name = name;
             this.url = url;
-            this.topic = topic;
+            this.logTopic = $"{name}/logs";
+            this.exceptionTopic = $"{name}/exceptions";
+            this.controlTopic = $"{name}/controls";
         }
 
         public Task StartAsync()
@@ -47,10 +53,30 @@ namespace Client
                 if (mqttClient != null)
                     await mqttClient.StopAsync();
                 mqttClient = new MqttFactory().CreateManagedMqttClient();
-                await mqttClient.SubscribeAsync(new MqttTopicFilter { Topic = topic, QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce });
+                await mqttClient.SubscribeAsync(new MqttTopicFilter
+                {
+                    Topic = logTopic,
+                    QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+                }, new MqttTopicFilter
+                {
+                    Topic = exceptionTopic,
+                    QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+                },
+                new MqttTopicFilter
+                {
+                    Topic = controlTopic,
+                    QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
+                });
                 mqttClient.UseApplicationMessageReceivedHandler(e =>
                 {
-                    OnMessage?.Invoke(Encoding.UTF8.GetString(e.ApplicationMessage.Payload));
+                    var msg = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
+                    var topic = e.ApplicationMessage.Topic;
+                    if (topic == logTopic)
+                        OnLog?.Invoke(msg);
+                    else if (topic == exceptionTopic)
+                        OnException?.Invoke(msg);
+                    else if (topic == controlTopic)
+                        OnControlResponse?.Invoke(msg);
                 });
                 mqttClient.ConnectedHandler = this;
                 mqttClient.ConnectingFailedHandler = this;

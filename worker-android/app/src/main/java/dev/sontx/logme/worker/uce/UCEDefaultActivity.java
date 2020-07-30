@@ -46,64 +46,34 @@ public final class UCEDefaultActivity extends Activity {
         setTheme(android.R.style.Theme_Holo_Light_DarkActionBar);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.default_error_activity);
-        findViewById(R.id.button_close_app).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UCEHandler.closeApplication(UCEDefaultActivity.this);
+        findViewById(R.id.button_close_app).setOnClickListener(v -> UCEDefaultActivity.this.finish());
+        findViewById(R.id.button_copy_error_log).setOnClickListener(v -> copyErrorToClipboard());
+        findViewById(R.id.button_share_error_log).setOnClickListener(v -> shareErrorLog());
+        findViewById(R.id.button_save_error_log).setOnClickListener(v -> saveErrorLogToFile(true));
+        findViewById(R.id.button_email_error_log).setOnClickListener(v -> emailErrorLog());
+        findViewById(R.id.button_view_error_log).setOnClickListener(v -> {
+            AlertDialog dialog = new AlertDialog.Builder(UCEDefaultActivity.this)
+                    .setTitle("Error Log")
+                    .setMessage(getAllErrorDetailsFromIntent(UCEDefaultActivity.this, getIntent()))
+                    .setPositiveButton("Copy Log & Close",
+                            (dialog1, which) -> {
+                                copyErrorToClipboard();
+                                dialog1.dismiss();
+                            })
+                    .setNeutralButton("Close",
+                            (dialog12, which) -> dialog12.dismiss())
+                    .show();
+            TextView textView = dialog.findViewById(android.R.id.message);
+            if (textView != null) {
+                textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
             }
         });
-        findViewById(R.id.button_copy_error_log).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                copyErrorToClipboard();
-            }
-        });
-        findViewById(R.id.button_share_error_log).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                shareErrorLog();
-            }
-        });
-        findViewById(R.id.button_save_error_log).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveErrorLogToFile(true);
-            }
-        });
-        findViewById(R.id.button_email_error_log).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                emailErrorLog();
-            }
-        });
-        findViewById(R.id.button_view_error_log).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog dialog = new AlertDialog.Builder(UCEDefaultActivity.this)
-                        .setTitle("Error Log")
-                        .setMessage(getAllErrorDetailsFromIntent(UCEDefaultActivity.this, getIntent()))
-                        .setPositiveButton("Copy Log & Close",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        copyErrorToClipboard();
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNeutralButton("Close",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .show();
-                TextView textView = dialog.findViewById(android.R.id.message);
-                if (textView != null) {
-                    textView.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
-                }
-            }
-        });
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        UCEHandler.killCurrentProcess();
     }
 
     public static String getApplicationName(Context context) {
@@ -122,11 +92,13 @@ public final class UCEDefaultActivity extends Activity {
     }
 
     private static String getActivityLogFromIntent(Intent intent) {
-        return intent.getStringExtra(UCEHandler.EXTRA_ACTIVITY_LOG);
+        String value = intent.getStringExtra(UCEHandler.EXTRA_ACTIVITY_LOG);
+        return value != null ? value.trim() : null;
     }
 
     private static String getStackTraceFromIntent(Intent intent) {
-        return intent.getStringExtra(UCEHandler.EXTRA_STACK_TRACE);
+        String value = intent.getStringExtra(UCEHandler.EXTRA_STACK_TRACE);
+        return value != null ? value.trim() : null;
     }
 
     private void emailErrorLog() {
@@ -201,8 +173,6 @@ public final class UCEDefaultActivity extends Activity {
     public static String getAllErrorDetailsFromIntent(Context context, Intent intent) {
         String LINE_SEPARATOR = "\n";
         StringBuilder errorReport = new StringBuilder();
-        errorReport.append("***** UCE HANDLER Library ");
-        errorReport.append("\n***** by Rohit Surwase \n");
         errorReport.append("\n***** DEVICE INFO \n");
         errorReport.append("Brand: ");
         errorReport.append(Build.BRAND);

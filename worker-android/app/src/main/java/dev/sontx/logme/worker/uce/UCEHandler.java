@@ -80,60 +80,58 @@ public final class UCEHandler {
                     }
                     application = (Application) context.getApplicationContext();
                     //Setup UCE Handler.
-                    Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
-                        @Override
-                        public void uncaughtException(Thread thread, final Throwable throwable) {
-                            if (isUCEHEnabled) {
-                                Log.e(TAG, "App crashed, executing UCEHandler's UncaughtExceptionHandler", throwable);
-                                if (hasCrashedInTheLastSeconds(application)) {
-                                    Log.e(TAG, "App already crashed recently, not starting custom error activity because we could enter a restart loop. Are you sure that your app does not crash directly on init?", throwable);
+                    Thread.setDefaultUncaughtExceptionHandler((thread, throwable) -> {
+                        if (isUCEHEnabled) {
+                            Log.e(TAG, "App crashed, executing UCEHandler's UncaughtExceptionHandler", throwable);
+                            if (hasCrashedInTheLastSeconds(application)) {
+                                Log.e(TAG, "App already crashed recently, not starting custom error activity because we could enter a restart loop. Are you sure that your app does not crash directly on init?", throwable);
+                                if (oldHandler != null) {
+                                    oldHandler.uncaughtException(thread, throwable);
+                                    return;
+                                }
+                            } else {
+                                setLastCrashTimestamp(application, new Date().getTime());
+                                if (!isInBackground || isBackgroundMode) {
+                                    final Intent intent = new Intent(application, UCEDefaultActivity.class);
+                                    StringWriter sw = new StringWriter();
+                                    PrintWriter pw = new PrintWriter(sw);
+                                    throwable.printStackTrace(pw);
+                                    String stackTraceString = sw.toString();
+                                    if (stackTraceString.length() > MAX_STACK_TRACE_SIZE) {
+                                        String disclaimer = " [stack trace too large]";
+                                        stackTraceString = stackTraceString.substring(0, MAX_STACK_TRACE_SIZE - disclaimer.length()) + disclaimer;
+                                    }
+                                    intent.putExtra(EXTRA_STACK_TRACE, stackTraceString);
+                                    if (isTrackActivitiesEnabled) {
+                                        StringBuilder activityLogStringBuilder = new StringBuilder();
+                                        while (!activityLog.isEmpty()) {
+                                            activityLogStringBuilder.append(activityLog.poll());
+                                        }
+                                        intent.putExtra(EXTRA_ACTIVITY_LOG, activityLogStringBuilder.toString());
+                                    }
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    if (handleIntent != null) {
+                                        handleIntent.run(intent);
+                                    }
+                                    application.startActivity(intent);
+                                    return;
+                                } else {
                                     if (oldHandler != null) {
                                         oldHandler.uncaughtException(thread, throwable);
                                         return;
                                     }
-                                } else {
-                                    setLastCrashTimestamp(application, new Date().getTime());
-                                    if (!isInBackground || isBackgroundMode) {
-                                        final Intent intent = new Intent(application, UCEDefaultActivity.class);
-                                        StringWriter sw = new StringWriter();
-                                        PrintWriter pw = new PrintWriter(sw);
-                                        throwable.printStackTrace(pw);
-                                        String stackTraceString = sw.toString();
-                                        if (stackTraceString.length() > MAX_STACK_TRACE_SIZE) {
-                                            String disclaimer = " [stack trace too large]";
-                                            stackTraceString = stackTraceString.substring(0, MAX_STACK_TRACE_SIZE - disclaimer.length()) + disclaimer;
-                                        }
-                                        intent.putExtra(EXTRA_STACK_TRACE, stackTraceString);
-                                        if (isTrackActivitiesEnabled) {
-                                            StringBuilder activityLogStringBuilder = new StringBuilder();
-                                            while (!activityLog.isEmpty()) {
-                                                activityLogStringBuilder.append(activityLog.poll());
-                                            }
-                                            intent.putExtra(EXTRA_ACTIVITY_LOG, activityLogStringBuilder.toString());
-                                        }
-                                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                        if (handleIntent != null) {
-                                            handleIntent.run(intent);
-                                        }
-                                        application.startActivity(intent);
-                                    } else {
-                                        if (oldHandler != null) {
-                                            oldHandler.uncaughtException(thread, throwable);
-                                            return;
-                                        }
-                                        //If it is null (should not be), we let it continue and kill the process or it will be stuck
-                                    }
+                                    //If it is null (should not be), we let it continue and kill the process or it will be stuck
                                 }
-                                final Activity lastActivity = lastActivityCreated.get();
-                                if (lastActivity != null) {
-                                    lastActivity.finish();
-                                    lastActivityCreated.clear();
-                                }
-                                killCurrentProcess();
-                            } else if (oldHandler != null) {
-                                //Pass control to old uncaught exception handler
-                                oldHandler.uncaughtException(thread, throwable);
                             }
+                            final Activity lastActivity = lastActivityCreated.get();
+                            if (lastActivity != null) {
+                                lastActivity.finish();
+                                lastActivityCreated.clear();
+                            }
+                            killCurrentProcess();
+                        } else if (oldHandler != null) {
+                            //Pass control to old uncaught exception handler
+                            oldHandler.uncaughtException(thread, throwable);
                         }
                     });
                     application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
@@ -214,7 +212,7 @@ public final class UCEHandler {
         context.getSharedPreferences(SHARED_PREFERENCES_FILE, Context.MODE_PRIVATE).edit().putLong(SHARED_PREFERENCES_FIELD_TIMESTAMP, timestamp).commit();
     }
 
-    private static void killCurrentProcess() {
+    static void killCurrentProcess() {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(10);
     }

@@ -43,13 +43,14 @@ namespace Client
             await DoDisconnect();
             btnConnect.Enabled = false;
             var appName = txtAppName.Text.Trim();
-            var topic = $"{appName}/logs";
-            supervisorClient = new MqttSupervisorClient(appName, txtServerAddress.Text, topic);
-            supervisorClient.OnMessage = HandleMessage;
+            supervisorClient = new MqttSupervisorClient(appName, txtServerAddress.Text);
+            supervisorClient.OnLog = HandleLog;
+            supervisorClient.OnException = HandleException;
+            supervisorClient.OnControlResponse = HandleControlResponse;
             try
             {
                 await supervisorClient.StartAsync();
-                labStatus.Text = $"Supervising {topic}";
+                labStatus.Text = $"Supervising";
                 appSettings.AppName = txtAppName.Text;
                 appSettings.ServerAddress = txtServerAddress.Text;
                 txtAppName.ReadOnly = true;
@@ -68,7 +69,31 @@ namespace Client
             }
         }
 
-        private void HandleMessage(string msg)
+        private void HandleControlResponse(string msg)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void HandleException(string msg)
+        {
+            if (InvokeRequired)
+            {
+                BeginInvoke((MethodInvoker)delegate { HandleException(msg); });
+            }
+            else
+            {
+                var parts = msg.Split(new char[] { '\n' }, 2);
+                var appName = parts.Length == 2 ? parts[0] : "Unknown";
+                var exception = parts.Length == 2 ? parts[1] : msg;
+
+                var exceptionForm = new ExceptionForm();
+                exceptionForm.Text = $"Exception from '{appName}'";
+                exceptionForm.SetException(exception.Trim());
+                exceptionForm.Show(this);
+            }
+        }
+
+        private void HandleLog(string msg)
         {
             messageDisplayer.Append(msg);
             UpdateLogCount();
