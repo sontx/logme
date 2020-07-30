@@ -93,14 +93,7 @@ public final class UCEHandler {
                                 setLastCrashTimestamp(application, new Date().getTime());
                                 if (!isInBackground || isBackgroundMode) {
                                     final Intent intent = new Intent(application, UCEDefaultActivity.class);
-                                    StringWriter sw = new StringWriter();
-                                    PrintWriter pw = new PrintWriter(sw);
-                                    throwable.printStackTrace(pw);
-                                    String stackTraceString = sw.toString();
-                                    if (stackTraceString.length() > MAX_STACK_TRACE_SIZE) {
-                                        String disclaimer = " [stack trace too large]";
-                                        stackTraceString = stackTraceString.substring(0, MAX_STACK_TRACE_SIZE - disclaimer.length()) + disclaimer;
-                                    }
+                                    String stackTraceString = getStackTrace(throwable);
                                     intent.putExtra(EXTRA_STACK_TRACE, stackTraceString);
                                     if (isTrackActivitiesEnabled) {
                                         StringBuilder activityLogStringBuilder = new StringBuilder();
@@ -193,6 +186,18 @@ public final class UCEHandler {
         } catch (Throwable throwable) {
             Log.e(TAG, "UCEHandler can not be initialized. Help making it better by reporting this as a bug.", throwable);
         }
+    }
+
+    public static String getStackTrace(Throwable throwable) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        throwable.printStackTrace(pw);
+        String stackTraceString = sw.toString();
+        if (stackTraceString.length() > MAX_STACK_TRACE_SIZE) {
+            String disclaimer = " [stack trace too large]";
+            stackTraceString = stackTraceString.substring(0, MAX_STACK_TRACE_SIZE - disclaimer.length()) + disclaimer;
+        }
+        return stackTraceString;
     }
 
     /**

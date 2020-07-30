@@ -3,6 +3,8 @@ package dev.sontx.logme.worker;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import dev.sontx.logme.worker.uce.UCEHandler;
+
 public final class Logger {
     private static final String TAG = Logger.class.getName();
     @SuppressLint("StaticFieldLeak")
@@ -24,7 +26,10 @@ public final class Logger {
 
     public static void e(String tag, String message, Throwable throwable) {
         Log.e(tag, message, throwable);
-        sendToSupervisor("ERROR", message);
+        String stackTrace = "";
+        if (throwable != null)
+            stackTrace = "\n" + UCEHandler.getStackTrace(throwable);
+        sendToSupervisor("ERROR", message + stackTrace);
     }
 
     private static void sendToSupervisor(String type, String message) {
