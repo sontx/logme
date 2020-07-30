@@ -17,6 +17,12 @@ import dev.sontx.logme.worker.uce.UCEHandler;
 public final class LogMe implements CommandHandler {
     private static final String TAG = LogMe.class.getName();
 
+    public static LogMe startNew(Context context, String url) {
+        LogMe logMe = new LogMe(context, url);
+        logMe.start();
+        return logMe;
+    }
+
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final IWorkerClient workerClient;
     private final Context context;
