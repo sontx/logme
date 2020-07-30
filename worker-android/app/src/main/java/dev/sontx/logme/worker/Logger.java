@@ -3,12 +3,17 @@ package dev.sontx.logme.worker;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import dev.sontx.logme.worker.uce.UCEHandler;
 
 public final class Logger {
     private static final String TAG = Logger.class.getName();
     @SuppressLint("StaticFieldLeak")
     private static LogMe logMe;
+
+    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
 
     static void setLogMe(LogMe logMe) {
         Logger.logMe = logMe;
@@ -35,7 +40,8 @@ public final class Logger {
     private static void sendToSupervisor(String type, String message) {
         LogMe logMe = Logger.logMe;
         if (logMe != null) {
-            logMe.sendLog(String.format("%s: %s", type, message));
+            String now = simpleDateFormat.format(new Date());
+            logMe.sendLog(String.format("%s %s: %s", now, type, message));
         }
     }
 

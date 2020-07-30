@@ -32,10 +32,10 @@ namespace Client
             else
             {
                 Count++;
-                var parts = msg.Split(new char[] { ' ' }, 2);
-                var header = parts[0];
-                var color = colors.ContainsKey(header)
-                    ? colors[header]
+                var parts = msg.Split(new char[] { ' ' }, 4);// date time type msg
+                var type = parts.Length == 4 ? parts[2] : "";
+                var color = colors.ContainsKey(type)
+                    ? colors[type]
                     : SystemColors.ControlText;
                 AppendLine(msg, color);
                 richTextBox.ScrollToCaret();
