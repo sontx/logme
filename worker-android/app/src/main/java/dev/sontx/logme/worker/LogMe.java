@@ -1,8 +1,11 @@
 package dev.sontx.logme.worker;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.provider.Settings;
+import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Log;
 
 import java.util.concurrent.ExecutorService;
@@ -19,19 +22,19 @@ public final class LogMe implements CommandHandler {
     private final Context context;
 
     public LogMe(Context context, String url) {
-        this.context = context.getApplicationContext();
-        new UCEHandler.Builder(this.context)
+        this.context = context;
+        new UCEHandler.Builder(context)
                 .setHandleIntent(value -> {
-                    String report = UCEDefaultActivity.getAllErrorDetailsFromIntent(this.context, value);
-                    String appName = UCEDefaultActivity.getApplicationName(this.context);
+                    String report = UCEDefaultActivity.getAllErrorDetailsFromIntent(context, value);
+                    String appName = UCEDefaultActivity.getApplicationName(context);
                     String wrap = String.format("%s\n%s", appName, report);
                     send(wrap, MessageType.Exception);
                 })
                 .build();
 
-        String appName = UCEDefaultActivity.getApplicationName(this.context).replace(" ", "");
+        String appName = UCEDefaultActivity.getApplicationName(context).replace(" ", "");
         String clientName = getClientId(appName);
-        MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(this.context, clientName, url, appName);
+        MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(context, clientName, url, appName);
         mqttIWorkerClient.setCommandHandler(this);
         workerClient = mqttIWorkerClient;
     }
@@ -77,10 +80,22 @@ public final class LogMe implements CommandHandler {
 
     @Override
     public void handleCommand(String command) {
-        if (Constants.COMMAND_GET_SYSTEM_INFO.equals(command.toUpperCase())) {
-            String info = SystemInfo.getInfo(context);
+        String data = null;
+        switch (command.toUpperCase()) {
+            case Constants.COMMAND_GET_SYSTEM_INFO:
+                data = SystemInfo.getInfo(context);
+                break;
+            case Constants.COMMAND_TAKE_SCREENSHOT:
+                if (context instanceof Activity) {
+                    byte[] screenshot = ScreenshotHelper.takeScreenshot((Activity) context);
+                    data = Base64.encodeToString(screenshot, Base64.DEFAULT);
+                }
+                break;
+        }
+
+        if (!TextUtils.isEmpty(data)) {
             String appName = UCEDefaultActivity.getApplicationName(context);
-            String wrap = String.format("%s\n%s\n%s", command, appName, info);
+            String wrap = String.format("%s\n%s\n%s", command, appName, data);
             send(wrap, MessageType.ControlResponse);
         }
     }

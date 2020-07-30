@@ -28,20 +28,25 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.txtServerAddress = new System.Windows.Forms.TextBox();
             this.txtAppName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.btnConnect = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnSystemInfo = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
+            this.btnConnect = new System.Windows.Forms.Button();
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.itemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel2 = new System.Windows.Forms.Panel();
             this.richTextBox1 = new System.Windows.Forms.RichTextBox();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.labStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.labLogsCount = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnSystemInfo = new System.Windows.Forms.Button();
+            this.btnScreenshot = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
+            this.contextMenuStrip1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -86,20 +91,9 @@
             this.label2.Text = "Server Address:";
             this.label2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnConnect
-            // 
-            this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnConnect.Enabled = false;
-            this.btnConnect.Location = new System.Drawing.Point(437, 118);
-            this.btnConnect.Name = "btnConnect";
-            this.btnConnect.Size = new System.Drawing.Size(86, 23);
-            this.btnConnect.TabIndex = 2;
-            this.btnConnect.Text = "Connect";
-            this.btnConnect.UseVisualStyleBackColor = true;
-            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
-            // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnScreenshot);
             this.panel1.Controls.Add(this.btnSystemInfo);
             this.panel1.Controls.Add(this.btnClear);
             this.panel1.Controls.Add(this.btnConnect);
@@ -113,16 +107,54 @@
             this.panel1.Size = new System.Drawing.Size(535, 155);
             this.panel1.TabIndex = 3;
             // 
+            // btnSystemInfo
+            // 
+            this.btnSystemInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSystemInfo.Enabled = false;
+            this.btnSystemInfo.Location = new System.Drawing.Point(345, 118);
+            this.btnSystemInfo.Name = "btnSystemInfo";
+            this.btnSystemInfo.Size = new System.Drawing.Size(86, 23);
+            this.btnSystemInfo.TabIndex = 2;
+            this.btnSystemInfo.Text = "System Info";
+            this.btnSystemInfo.UseVisualStyleBackColor = true;
+            this.btnSystemInfo.Click += new System.EventHandler(this.btnSystemInfo_Click);
+            // 
             // btnClear
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(253, 118);
+            this.btnClear.Location = new System.Drawing.Point(161, 118);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(86, 23);
             this.btnClear.TabIndex = 2;
             this.btnClear.Text = "Clear";
             this.btnClear.UseVisualStyleBackColor = true;
             this.btnClear.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnConnect
+            // 
+            this.btnConnect.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnConnect.ContextMenuStrip = this.contextMenuStrip1;
+            this.btnConnect.Enabled = false;
+            this.btnConnect.Location = new System.Drawing.Point(437, 118);
+            this.btnConnect.Name = "btnConnect";
+            this.btnConnect.Size = new System.Drawing.Size(86, 23);
+            this.btnConnect.TabIndex = 2;
+            this.btnConnect.Text = "Connect";
+            this.btnConnect.UseVisualStyleBackColor = true;
+            this.btnConnect.Click += new System.EventHandler(this.btnConnect_Click);
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.itemToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(99, 26);
+            // 
+            // itemToolStripMenuItem
+            // 
+            this.itemToolStripMenuItem.Name = "itemToolStripMenuItem";
+            this.itemToolStripMenuItem.Size = new System.Drawing.Size(98, 22);
+            this.itemToolStripMenuItem.Text = "item";
             // 
             // panel2
             // 
@@ -169,17 +201,17 @@
             this.labLogsCount.Spring = true;
             this.labLogsCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnSystemInfo
+            // btnScreenshot
             // 
-            this.btnSystemInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSystemInfo.Enabled = false;
-            this.btnSystemInfo.Location = new System.Drawing.Point(345, 118);
-            this.btnSystemInfo.Name = "btnSystemInfo";
-            this.btnSystemInfo.Size = new System.Drawing.Size(86, 23);
-            this.btnSystemInfo.TabIndex = 2;
-            this.btnSystemInfo.Text = "System Info";
-            this.btnSystemInfo.UseVisualStyleBackColor = true;
-            this.btnSystemInfo.Click += new System.EventHandler(this.btnSystemInfo_Click);
+            this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnScreenshot.Enabled = false;
+            this.btnScreenshot.Location = new System.Drawing.Point(253, 118);
+            this.btnScreenshot.Name = "btnScreenshot";
+            this.btnScreenshot.Size = new System.Drawing.Size(86, 23);
+            this.btnScreenshot.TabIndex = 2;
+            this.btnScreenshot.Text = "Screenshot";
+            this.btnScreenshot.UseVisualStyleBackColor = true;
+            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
             // 
             // MainForm
             // 
@@ -195,6 +227,7 @@
             this.Text = "Supervisor - Client";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.contextMenuStrip1.ResumeLayout(false);
             this.panel2.ResumeLayout(false);
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
@@ -217,6 +250,9 @@
         private System.Windows.Forms.ToolStripStatusLabel labStatus;
         private System.Windows.Forms.ToolStripStatusLabel labLogsCount;
         private System.Windows.Forms.Button btnSystemInfo;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem itemToolStripMenuItem;
+        private System.Windows.Forms.Button btnScreenshot;
     }
 }
 

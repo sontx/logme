@@ -23,7 +23,8 @@ namespace Client
         protected override async void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
-            await supervisorClient?.StopAsync();
+            if (supervisorClient != null)
+                await supervisorClient.StopAsync();
         }
 
         private void btnClear_Click(object sender, EventArgs e)
@@ -52,6 +53,14 @@ namespace Client
             btnSystemInfo.Enabled = true;
         }
 
+        private async void btnScreenshot_Click(object sender, EventArgs e)
+        {
+            btnScreenshot.Enabled = false;
+            await supervisorClient.SendCommand(Commands.TAKE_SCREENSHOT);
+            await Task.Delay(1000);
+            btnScreenshot.Enabled = true;
+        }
+
         private async Task DoConnect()
         {
             await DoDisconnect();
@@ -70,6 +79,7 @@ namespace Client
                 txtAppName.ReadOnly = true;
                 txtServerAddress.ReadOnly = true;
                 btnSystemInfo.Enabled = true;
+                btnScreenshot.Enabled = true;
                 btnConnect.Text = "Disconnect";
                 messageDisplayer.Clear();
             }
@@ -97,11 +107,21 @@ namespace Client
                 var appName = parts.Length == 3 ? parts[1] : "Unknown";
                 var info = parts.Length == 3 ? parts[2] : msg;
 
-                var infoForm = new InfoForm();
-                infoForm.Text = $"{command} -> '{appName}'";
-                infoForm.SetVariant(InfoForm.Variant.Info);
-                infoForm.SetInfo(info.Trim());
-                infoForm.Show(this);
+                if (command.ToUpper() == Commands.TAKE_SCREENSHOT)
+                {
+                    var screenshotPreviewForm = new ScreenshotPreviewForm();
+                    screenshotPreviewForm.Text = $"Screenshot from '{appName}'";
+                    screenshotPreviewForm.SetScreenshot(info);
+                    screenshotPreviewForm.Show(this);
+                }
+                else
+                {
+                    var infoForm = new InfoForm();
+                    infoForm.Text = $"{command} -> '{appName}'";
+                    infoForm.SetVariant(InfoForm.Variant.Info);
+                    infoForm.SetInfo(info.Trim());
+                    infoForm.Show(this);
+                }
             }
         }
 
@@ -156,6 +176,7 @@ namespace Client
             txtServerAddress.ReadOnly = false;
             btnConnect.Enabled = true;
             btnSystemInfo.Enabled = false;
+            btnScreenshot.Enabled = false;
             btnConnect.Text = "Connect";
         }
 
