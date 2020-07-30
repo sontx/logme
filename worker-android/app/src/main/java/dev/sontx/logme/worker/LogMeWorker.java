@@ -20,7 +20,7 @@ public final class LogMeWorker implements Callback<Intent> {
         this.context = context;
         String appName = UCEDefaultActivity.getApplicationName(context).replace(" ", "");
         String clientId = getClientId(appName);
-        workerClient = new MqttIWorkerClient(context, appName, url, String.format("%s/logs", clientId));
+        workerClient = new MqttIWorkerClient(context, clientId, url, String.format("%s/logs", appName));
         new UCEHandler.Builder(context)
                 .setHandleIntent(this)
                 .build();
