@@ -194,5 +194,10 @@ namespace Client
         {
             btnConnect.Enabled = !string.IsNullOrWhiteSpace(txtAppName.Text) && !string.IsNullOrWhiteSpace(txtServerAddress.Text);
         }
+
+        private void chkTopMost_CheckedChanged(object sender, EventArgs e)
+        {
+            TopMost = chkTopMost.Checked;
+        }
     }
 }

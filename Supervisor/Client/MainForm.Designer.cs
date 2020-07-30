@@ -34,6 +34,7 @@
             this.txtAppName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnScreenshot = new System.Windows.Forms.Button();
             this.btnSystemInfo = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
@@ -44,7 +45,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.labStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.labLogsCount = new System.Windows.Forms.ToolStripStatusLabel();
-            this.btnScreenshot = new System.Windows.Forms.Button();
+            this.chkTopMost = new System.Windows.Forms.CheckBox();
             this.panel1.SuspendLayout();
             this.contextMenuStrip1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -93,6 +94,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.chkTopMost);
             this.panel1.Controls.Add(this.btnScreenshot);
             this.panel1.Controls.Add(this.btnSystemInfo);
             this.panel1.Controls.Add(this.btnClear);
@@ -106,6 +108,18 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(535, 155);
             this.panel1.TabIndex = 3;
+            // 
+            // btnScreenshot
+            // 
+            this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnScreenshot.Enabled = false;
+            this.btnScreenshot.Location = new System.Drawing.Point(253, 118);
+            this.btnScreenshot.Name = "btnScreenshot";
+            this.btnScreenshot.Size = new System.Drawing.Size(86, 23);
+            this.btnScreenshot.TabIndex = 2;
+            this.btnScreenshot.Text = "Screenshot";
+            this.btnScreenshot.UseVisualStyleBackColor = true;
+            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
             // 
             // btnSystemInfo
             // 
@@ -201,17 +215,16 @@
             this.labLogsCount.Spring = true;
             this.labLogsCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // btnScreenshot
+            // chkTopMost
             // 
-            this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnScreenshot.Enabled = false;
-            this.btnScreenshot.Location = new System.Drawing.Point(253, 118);
-            this.btnScreenshot.Name = "btnScreenshot";
-            this.btnScreenshot.Size = new System.Drawing.Size(86, 23);
-            this.btnScreenshot.TabIndex = 2;
-            this.btnScreenshot.Text = "Screenshot";
-            this.btnScreenshot.UseVisualStyleBackColor = true;
-            this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
+            this.chkTopMost.AutoSize = true;
+            this.chkTopMost.Location = new System.Drawing.Point(15, 122);
+            this.chkTopMost.Name = "chkTopMost";
+            this.chkTopMost.Size = new System.Drawing.Size(71, 17);
+            this.chkTopMost.TabIndex = 3;
+            this.chkTopMost.Text = "Top Most";
+            this.chkTopMost.UseVisualStyleBackColor = true;
+            this.chkTopMost.CheckedChanged += new System.EventHandler(this.chkTopMost_CheckedChanged);
             // 
             // MainForm
             // 
@@ -253,6 +266,7 @@
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem itemToolStripMenuItem;
         private System.Windows.Forms.Button btnScreenshot;
+        private System.Windows.Forms.CheckBox chkTopMost;
     }
 }
 
