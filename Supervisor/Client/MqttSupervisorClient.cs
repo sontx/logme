@@ -21,6 +21,7 @@ namespace Client
         private readonly string logTopic;
         private readonly string exceptionTopic;
         private readonly string controlTopic;
+        private readonly string controlResponseTopic;
         private readonly ManualResetEvent startWaitEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent stopWaitEvent = new ManualResetEvent(false);
         private string connectingFailedReason;
@@ -33,6 +34,7 @@ namespace Client
             this.logTopic = $"{name}/logs";
             this.exceptionTopic = $"{name}/exceptions";
             this.controlTopic = $"{name}/controls";
+            this.controlResponseTopic = $"{name}/controls/response";
         }
 
         public Task StartAsync()
@@ -64,7 +66,7 @@ namespace Client
                 },
                 new MqttTopicFilter
                 {
-                    Topic = controlTopic,
+                    Topic = controlResponseTopic,
                     QualityOfServiceLevel = MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce
                 });
                 mqttClient.UseApplicationMessageReceivedHandler(e =>
@@ -75,7 +77,7 @@ namespace Client
                         OnLog?.Invoke(msg);
                     else if (topic == exceptionTopic)
                         OnException?.Invoke(msg);
-                    else if (topic == controlTopic)
+                    else if (topic == controlResponseTopic)
                         OnControlResponse?.Invoke(msg);
                 });
                 mqttClient.ConnectedHandler = this;
@@ -125,6 +127,11 @@ namespace Client
             {
                 stopWaitEvent.Set();
             });
+        }
+
+        public Task SendCommand(string command)
+        {
+            return mqttClient.PublishAsync(controlTopic, command, MQTTnet.Protocol.MqttQualityOfServiceLevel.ExactlyOnce);
         }
     }
 }

@@ -12,5 +12,7 @@ namespace Client
         Task StartAsync();
 
         Task StopAsync();
+
+        Task SendCommand(string command);
     }
 }

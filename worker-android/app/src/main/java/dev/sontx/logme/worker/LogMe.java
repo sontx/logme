@@ -5,12 +5,16 @@ import android.content.Context;
 import android.provider.Settings;
 import android.util.Log;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import dev.sontx.logme.worker.uce.UCEDefaultActivity;
 import dev.sontx.logme.worker.uce.UCEHandler;
 
 public final class LogMe implements CommandHandler {
     private static final String TAG = LogMe.class.getName();
 
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final IWorkerClient workerClient;
     private final Context context;
 
@@ -39,11 +43,13 @@ public final class LogMe implements CommandHandler {
     }
 
     public void start() {
-        try {
-            workerClient.start();
-        } catch (LogMeException e) {
-            Log.e(TAG, "Error while starting " + getClass().getName(), e);
-        }
+        executorService.execute(() -> {
+            try {
+                workerClient.start();
+            } catch (LogMeException e) {
+                Log.e(TAG, "Error while starting " + getClass().getName(), e);
+            }
+        });
     }
 
     public void stop() {
@@ -57,21 +63,24 @@ public final class LogMe implements CommandHandler {
         send(log, MessageType.Log);
     }
 
-    private synchronized void send(String msg, MessageType messageType) {
-        try {
-            if (workerClient != null) {
-                workerClient.send(msg, messageType);
+    private void send(String msg, MessageType messageType) {
+        executorService.execute(() -> {
+            try {
+                if (workerClient != null) {
+                    workerClient.send(msg, messageType);
+                }
+            } catch (LogMeException e) {
+                Log.e(TAG, "Error while sending crash logs", e);
             }
-        } catch (LogMeException e) {
-            Log.e(TAG, "Error while sending crash logs", e);
-        }
+        });
     }
 
     @Override
     public void handleCommand(String command) {
         if (Constants.COMMAND_GET_SYSTEM_INFO.equals(command.toUpperCase())) {
             String info = SystemInfo.getInfo(context);
-            String wrap = String.format("%s\n%s", command, info);
+            String appName = UCEDefaultActivity.getApplicationName(context);
+            String wrap = String.format("%s\n%s\n%s", command, appName, info);
             send(wrap, MessageType.ControlResponse);
         }
     }

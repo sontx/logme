@@ -20,6 +20,12 @@ namespace Client
             txtServerAddress.Text = appSettings.ServerAddress;
         }
 
+        protected override async void OnClosed(EventArgs e)
+        {
+            base.OnClosed(e);
+            await supervisorClient?.StopAsync();
+        }
+
         private void btnClear_Click(object sender, EventArgs e)
         {
             messageDisplayer.Clear();
@@ -36,6 +42,14 @@ namespace Client
             {
                 await DoDisconnect();
             }
+        }
+
+        private async void btnSystemInfo_Click(object sender, EventArgs e)
+        {
+            btnSystemInfo.Enabled = false;
+            await supervisorClient.SendCommand(Commands.GET_SYSTEM_INFO);
+            await Task.Delay(1000);
+            btnSystemInfo.Enabled = true;
         }
 
         private async Task DoConnect()
@@ -55,6 +69,7 @@ namespace Client
                 appSettings.ServerAddress = txtServerAddress.Text;
                 txtAppName.ReadOnly = true;
                 txtServerAddress.ReadOnly = true;
+                btnSystemInfo.Enabled = true;
                 btnConnect.Text = "Disconnect";
                 messageDisplayer.Clear();
             }
@@ -71,7 +86,23 @@ namespace Client
 
         private void HandleControlResponse(string msg)
         {
-            throw new NotImplementedException();
+            if (InvokeRequired)
+            {
+                BeginInvoke((MethodInvoker)delegate { HandleControlResponse(msg); });
+            }
+            else
+            {
+                var parts = msg.Split(new char[] { '\n' }, 3);
+                var command = parts.Length == 3 ? parts[0] : "Unknown";
+                var appName = parts.Length == 3 ? parts[1] : "Unknown";
+                var info = parts.Length == 3 ? parts[2] : msg;
+
+                var infoForm = new InfoForm();
+                infoForm.Text = $"{command} -> '{appName}'";
+                infoForm.SetVariant(InfoForm.Variant.Info);
+                infoForm.SetInfo(info.Trim());
+                infoForm.Show(this);
+            }
         }
 
         private void HandleException(string msg)
@@ -86,10 +117,11 @@ namespace Client
                 var appName = parts.Length == 2 ? parts[0] : "Unknown";
                 var exception = parts.Length == 2 ? parts[1] : msg;
 
-                var exceptionForm = new ExceptionForm();
-                exceptionForm.Text = $"Exception from '{appName}'";
-                exceptionForm.SetException(exception.Trim());
-                exceptionForm.Show(this);
+                var infoForm = new InfoForm();
+                infoForm.Text = $"Exception from '{appName}'";
+                infoForm.SetVariant(InfoForm.Variant.Warning);
+                infoForm.SetInfo(exception.Trim());
+                infoForm.Show(this);
             }
         }
 
@@ -123,6 +155,7 @@ namespace Client
             txtAppName.ReadOnly = false;
             txtServerAddress.ReadOnly = false;
             btnConnect.Enabled = true;
+            btnSystemInfo.Enabled = false;
             btnConnect.Text = "Connect";
         }
 

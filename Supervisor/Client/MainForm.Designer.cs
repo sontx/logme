@@ -40,6 +40,7 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.labStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.labLogsCount = new System.Windows.Forms.ToolStripStatusLabel();
+            this.btnSystemInfo = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -99,6 +100,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnSystemInfo);
             this.panel1.Controls.Add(this.btnClear);
             this.panel1.Controls.Add(this.btnConnect);
             this.panel1.Controls.Add(this.txtServerAddress);
@@ -114,7 +116,7 @@
             // btnClear
             // 
             this.btnClear.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClear.Location = new System.Drawing.Point(345, 118);
+            this.btnClear.Location = new System.Drawing.Point(253, 118);
             this.btnClear.Name = "btnClear";
             this.btnClear.Size = new System.Drawing.Size(86, 23);
             this.btnClear.TabIndex = 2;
@@ -167,6 +169,18 @@
             this.labLogsCount.Spring = true;
             this.labLogsCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
+            // btnSystemInfo
+            // 
+            this.btnSystemInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnSystemInfo.Enabled = false;
+            this.btnSystemInfo.Location = new System.Drawing.Point(345, 118);
+            this.btnSystemInfo.Name = "btnSystemInfo";
+            this.btnSystemInfo.Size = new System.Drawing.Size(86, 23);
+            this.btnSystemInfo.TabIndex = 2;
+            this.btnSystemInfo.Text = "System Info";
+            this.btnSystemInfo.UseVisualStyleBackColor = true;
+            this.btnSystemInfo.Click += new System.EventHandler(this.btnSystemInfo_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -202,6 +216,7 @@
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.ToolStripStatusLabel labStatus;
         private System.Windows.Forms.ToolStripStatusLabel labLogsCount;
+        private System.Windows.Forms.Button btnSystemInfo;
     }
 }
 

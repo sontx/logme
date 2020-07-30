@@ -26,6 +26,7 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
     private final String pushLogTopic;
     private final String exceptionTopic;
     private final String controlTopic;
+    private final String controlResponseTopic;
     private final Object syncRoot = new Object();
     private final Queue<PendingMessage> pendingMessageQueue = new ArrayDeque<>();
     private MqttAndroidClient client;
@@ -40,6 +41,7 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
         pushLogTopic = String.format(Constants.TOPIC_LOGS, appName);
         exceptionTopic = String.format(Constants.TOPIC_EXCEPTIONS, appName);
         controlTopic = String.format(Constants.TOPIC_CONTROLS, appName);
+        controlResponseTopic = String.format(Constants.TOPIC_CONTROLS_RESPONSE, appName);
     }
 
     @Override
@@ -138,7 +140,7 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
             case Exception:
                 return exceptionTopic;
             case ControlResponse:
-                return controlTopic;
+                return controlResponseTopic;
         }
         return null;
     }

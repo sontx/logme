@@ -6,4 +6,5 @@ interface Constants {
     String TOPIC_LOGS = "%s/logs";
     String TOPIC_EXCEPTIONS = "%s/exceptions";
     String TOPIC_CONTROLS = "%s/controls";
+    String TOPIC_CONTROLS_RESPONSE = "%s/controls/response";
 }
