@@ -135,6 +135,7 @@
     <Compile Include="ScreenshotPreviewForm.Designer.cs">
       <DependentUpon>ScreenshotPreviewForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="WaitHandleCommands.cs" />
     <EmbeddedResource Include="InfoForm.resx">
       <DependentUpon>InfoForm.cs</DependentUpon>
     </EmbeddedResource>

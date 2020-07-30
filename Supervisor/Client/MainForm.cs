@@ -9,6 +9,7 @@ namespace Client
     {
         private readonly AppSettings appSettings;
         private readonly IMessageDisplayer messageDisplayer;
+        private readonly WaitHandleCommands waitHandleCommands;
         private ISupervisorClient supervisorClient;
 
         public MainForm()
@@ -16,6 +17,9 @@ namespace Client
             InitializeComponent();
             messageDisplayer = new RichTextBoxMessageDisplayer(richTextBox1);
             appSettings = Config.Default.Get<AppSettings>();
+            waitHandleCommands = new WaitHandleCommands();
+            waitHandleCommands.Add(Commands.GET_SYSTEM_INFO);
+            waitHandleCommands.Add(Commands.TAKE_SCREENSHOT);
             txtAppName.Text = appSettings.AppName;
             txtServerAddress.Text = appSettings.ServerAddress;
         }
@@ -23,6 +27,7 @@ namespace Client
         protected override async void OnClosed(EventArgs e)
         {
             base.OnClosed(e);
+            waitHandleCommands.Dispose();
             if (supervisorClient != null)
                 await supervisorClient.StopAsync();
         }
@@ -49,7 +54,7 @@ namespace Client
         {
             btnSystemInfo.Enabled = false;
             await supervisorClient.SendCommand(Commands.GET_SYSTEM_INFO);
-            await Task.Delay(1000);
+            await waitHandleCommands.WaitAsync(Commands.GET_SYSTEM_INFO);
             btnSystemInfo.Enabled = true;
         }
 
@@ -57,7 +62,7 @@ namespace Client
         {
             btnScreenshot.Enabled = false;
             await supervisorClient.SendCommand(Commands.TAKE_SCREENSHOT);
-            await Task.Delay(1000);
+            await waitHandleCommands.WaitAsync(Commands.TAKE_SCREENSHOT);
             btnScreenshot.Enabled = true;
         }
 
@@ -81,6 +86,7 @@ namespace Client
                 btnSystemInfo.Enabled = true;
                 btnScreenshot.Enabled = true;
                 btnConnect.Text = "Disconnect";
+                btnConnect.ImageKey = "stop.png";
                 messageDisplayer.Clear();
             }
             catch (Exception ex)
@@ -107,7 +113,11 @@ namespace Client
                 var appName = parts.Length == 3 ? parts[1] : "Unknown";
                 var info = parts.Length == 3 ? parts[2] : msg;
 
-                if (command.ToUpper() == Commands.TAKE_SCREENSHOT)
+                command = command.ToUpper();
+
+                waitHandleCommands.Set(command);
+
+                if (command == Commands.TAKE_SCREENSHOT)
                 {
                     var screenshotPreviewForm = new ScreenshotPreviewForm();
                     screenshotPreviewForm.Text = $"Screenshot from '{appName}'";
@@ -178,6 +188,7 @@ namespace Client
             btnSystemInfo.Enabled = false;
             btnScreenshot.Enabled = false;
             btnConnect.Text = "Connect";
+            btnConnect.ImageKey = "start.png";
         }
 
         private void txtServerAddress_TextChanged(object sender, EventArgs e)
