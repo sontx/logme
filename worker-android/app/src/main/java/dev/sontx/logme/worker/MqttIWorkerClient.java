@@ -81,13 +81,8 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
         synchronized (syncRoot) {
             MqttAndroidClient client = this.client;
             if (client != null) {
-                try {
-                    client.disconnect();
-                    client.close();
-                    this.client = null;
-                } catch (MqttException e) {
-                    throw new LogMeException("Error while stopping " + getClass().getName(), e);
-                }
+                client.close();
+                this.client = null;
             }
         }
     }
