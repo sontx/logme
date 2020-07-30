@@ -46,6 +46,7 @@ public final class LogMe implements CommandHandler {
     }
 
     public void start() {
+        Logger.setLogMe(this);
         executorService.execute(() -> {
             try {
                 workerClient.start();
@@ -56,6 +57,7 @@ public final class LogMe implements CommandHandler {
     }
 
     public void stop() {
+        Logger.setLogMe(null);
         try {
             workerClient.stop();
         } catch (LogMeException ignored) {
