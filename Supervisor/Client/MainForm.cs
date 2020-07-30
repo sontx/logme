@@ -1,6 +1,6 @@
 ﻿using Config4Net.Core;
 using System;
-using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Client
@@ -26,39 +26,40 @@ namespace Client
             UpdateLogCount();
         }
 
-        private void btnConnect_Click(object sender, EventArgs e)
+        private async void btnConnect_Click(object sender, EventArgs e)
         {
             if (btnConnect.Text == "Connect")
             {
-                DoConnect();
+                await DoConnect();
             }
             else
             {
-                DoDisconnect();
+                await DoDisconnect();
             }
         }
 
-        private async void DoConnect()
+        private async Task DoConnect()
         {
-            DoDisconnect();
+            await DoDisconnect();
             btnConnect.Enabled = false;
             var appName = txtAppName.Text.Trim();
-            supervisorClient = new MqttSupervisorClient(appName, txtServerAddress.Text, $"{appName}/logs");
+            var topic = $"{appName}/logs";
+            supervisorClient = new MqttSupervisorClient(appName, txtServerAddress.Text, topic);
             supervisorClient.OnMessage = HandleMessage;
             try
             {
                 await supervisorClient.StartAsync();
-                labStatus.Text = $"Supervising {appName}";
+                labStatus.Text = $"Supervising {topic}";
                 appSettings.AppName = txtAppName.Text;
                 appSettings.ServerAddress = txtServerAddress.Text;
-                txtAppName.Enabled = false;
-                txtServerAddress.Enabled = false;
+                txtAppName.ReadOnly = true;
+                txtServerAddress.ReadOnly = true;
                 btnConnect.Text = "Disconnect";
                 messageDisplayer.Clear();
             }
             catch (Exception ex)
             {
-                btnConnect_Click(null, null);
+                await DoDisconnect();
                 labStatus.Text = $"Error: {ex.Message}";
             }
             finally
@@ -81,12 +82,11 @@ namespace Client
             }
             else
             {
-                var count = richTextBox1.Lines.Count(line => !string.IsNullOrEmpty(line));
-                labLogsCount.Text = $"{count} logs";
+                labLogsCount.Text = $"{messageDisplayer.Count} logs";
             }
         }
 
-        private async void DoDisconnect()
+        private async Task DoDisconnect()
         {
             btnConnect.Enabled = false;
             if (supervisorClient != null)
@@ -95,8 +95,8 @@ namespace Client
                 supervisorClient = null;
             }
             labStatus.Text = string.Empty;
-            txtAppName.Enabled = true;
-            txtServerAddress.Enabled = true;
+            txtAppName.ReadOnly = false;
+            txtServerAddress.ReadOnly = false;
             btnConnect.Enabled = true;
             btnConnect.Text = "Connect";
         }

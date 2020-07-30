@@ -7,6 +7,8 @@ namespace Client
     {
         private readonly RichTextBox richTextBox;
 
+        public int Count { get; private set; }
+
         public RichTextBoxMessageDisplayer(RichTextBox richTextBox)
         {
             this.richTextBox = richTextBox;
@@ -20,6 +22,7 @@ namespace Client
             }
             else
             {
+                Count++;
                 richTextBox.AppendText(msg + Environment.NewLine);
                 richTextBox.ScrollToCaret();
             }
@@ -28,6 +31,7 @@ namespace Client
         public void Clear()
         {
             richTextBox.Clear();
+            Count = 0;
         }
     }
 }
