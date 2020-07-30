@@ -13,6 +13,8 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 class MqttIWorkerClient implements IWorkerClient, MqttCallback {
     private static final String TAG = IWorkerClient.class.getName();
@@ -21,6 +23,8 @@ class MqttIWorkerClient implements IWorkerClient, MqttCallback {
     private final String name;
     private final String url;
     private final String topic;
+    private final Object syncRoot = new Object();
+    private final Queue<String> pendingMessageQueue = new ArrayDeque<>();
     private MqttAndroidClient client;
 
     public MqttIWorkerClient(Context context, String name, String url, String topic) {
@@ -36,7 +40,9 @@ class MqttIWorkerClient implements IWorkerClient, MqttCallback {
         try {
             MqttAndroidClient client = new MqttAndroidClient(context, url, name);
             client.setCallback(this);
-            client.connect(new MqttConnectOptions(), null, new IMqttActionListener() {
+            MqttConnectOptions options = new MqttConnectOptions();
+            options.setAutomaticReconnect(true);
+            client.connect(options, null, new IMqttActionListener() {
                 @Override
                 public void onSuccess(IMqttToken asyncActionToken) {
                     Log.i(TAG, "connect succeed");
@@ -47,7 +53,9 @@ class MqttIWorkerClient implements IWorkerClient, MqttCallback {
                     Log.e(TAG, "connect failed", exception);
                 }
             });
-            this.client = client;
+            synchronized (syncRoot) {
+                this.client = client;
+            }
         } catch (Exception e) {
             throw new LogMeException("Error while starting " + getClass().getName(), e);
         }
@@ -55,35 +63,59 @@ class MqttIWorkerClient implements IWorkerClient, MqttCallback {
 
     @Override
     public void stop() throws LogMeException {
-        MqttAndroidClient client = this.client;
-        if (client != null) {
-            try {
-                client.disconnect();
-                client.close();
-                this.client = null;
-            } catch (MqttException e) {
-                throw new LogMeException("Error while stopping " + getClass().getName(), e);
+        synchronized (syncRoot) {
+            MqttAndroidClient client = this.client;
+            if (client != null) {
+                try {
+                    client.disconnect();
+                    client.close();
+                    this.client = null;
+                } catch (MqttException e) {
+                    throw new LogMeException("Error while stopping " + getClass().getName(), e);
+                }
             }
         }
     }
 
     @Override
     public void send(String message) throws LogMeException{
-        MqttAndroidClient client = this.client;
-        if (client == null) {
-            return;
-        }
+        synchronized (syncRoot) {
+            MqttAndroidClient client = this.client;
 
-        try {
-            if (!client.isConnected()) {
-                client.connect();
+            try {
+                if (prepareSending(message, client)) {
+                    sendPendingMessages(client);
+                    sendImpl(message, client);
+                }
+            } catch (MqttException e) {
+                throw new LogMeException("Error while sending '" + message + "' to " + topic, e);
             }
-
-            byte[] payload = message.getBytes(StandardCharsets.UTF_8);
-            client.publish(topic, payload, 0, false);
-        } catch (MqttException e) {
-            throw new LogMeException("Error while sending '" + message + "' to " + topic, e);
         }
+    }
+
+    private boolean prepareSending(String message, MqttAndroidClient client) throws MqttException {
+        if (client != null && !client.isConnected()) {
+            client.connect();
+        }
+
+        boolean ready = client != null && client.isConnected();
+
+        if (!ready) {
+            pendingMessageQueue.add(message);
+        }
+        return ready;
+    }
+
+    private void sendPendingMessages(MqttAndroidClient client) throws MqttException {
+        while (pendingMessageQueue.size() > 0) {
+            String pendingMessage = pendingMessageQueue.remove();
+            sendImpl(pendingMessage, client);
+        }
+    }
+
+    private void sendImpl(String message, MqttAndroidClient client) throws MqttException {
+        byte[] payload = message.getBytes(StandardCharsets.UTF_8);
+        client.publish(topic, payload, 0, false);
     }
 
     @Override

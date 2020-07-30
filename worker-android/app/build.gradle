@@ -3,7 +3,7 @@ apply plugin: 'com.github.dcendents.android-maven'
 group='com.github.sontx'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 29
     buildToolsVersion "30.0.0"
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -11,7 +11,7 @@ android {
     }
     defaultConfig {
         minSdkVersion 19
-        targetSdkVersion 30
+        targetSdkVersion 29
         versionCode 1
         versionName "1.0"
 
