@@ -24,25 +24,13 @@ public final class LogMe implements CommandHandler {
     }
 
     private final ExecutorService executorService = Executors.newCachedThreadPool();
-    private final IWorkerClient workerClient;
     private final Context context;
+    private final String url;
+    private IWorkerClient workerClient;
 
     public LogMe(Context context, String url) {
         this.context = context;
-        new UCEHandler.Builder(context)
-                .setHandleIntent(value -> {
-                    String report = UCEDefaultActivity.getAllErrorDetailsFromIntent(context, value);
-                    String appName = UCEDefaultActivity.getApplicationName(context);
-                    String wrap = String.format("%s\n%s", appName, report);
-                    send(wrap, MessageType.Exception);
-                })
-                .build();
-
-        String appName = UCEDefaultActivity.getApplicationName(context).replace(" ", "");
-        String clientName = getClientId(appName);
-        MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(context, clientName, url, appName);
-        mqttIWorkerClient.setCommandHandler(this);
-        workerClient = mqttIWorkerClient;
+        this.url = url;
     }
 
     private String getClientId(String appName) {
@@ -53,13 +41,31 @@ public final class LogMe implements CommandHandler {
 
     public void start() {
         Logger.setLogMe(this);
-        executorService.execute(() -> {
-            try {
-                workerClient.start();
-            } catch (LogMeException e) {
-                Log.e(TAG, "Error while starting " + getClass().getName(), e);
-            }
+        Thread thread = new Thread(() -> {
+            executorService.execute(() -> {
+                try {
+                    new UCEHandler.Builder(context)
+                            .setHandleIntent(value -> {
+                                String report = UCEDefaultActivity.getAllErrorDetailsFromIntent(context, value);
+                                String appName = UCEDefaultActivity.getApplicationName(context);
+                                String wrap = String.format("%s\n%s", appName, report);
+                                send(wrap, MessageType.Exception);
+                            })
+                            .build();
+
+                    String appName = UCEDefaultActivity.getApplicationName(context).replace(" ", "");
+                    String clientName = getClientId(appName);
+                    MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(context, clientName, url, appName);
+                    mqttIWorkerClient.setCommandHandler(this);
+                    workerClient = mqttIWorkerClient;
+                    workerClient.start();
+                } catch (LogMeException e) {
+                    Log.e(TAG, "Error while starting " + getClass().getName(), e);
+                }
+            });
         });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     public void stop() {
