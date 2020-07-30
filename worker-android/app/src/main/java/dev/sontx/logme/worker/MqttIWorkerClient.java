@@ -57,6 +57,7 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
                     Log.i(TAG, "connect succeed");
                     try {
                         client.subscribe(controlTopic, 0, MqttIWorkerClient.this);
+                        sendPendingMessages(client);
                     } catch (MqttException e) {
                         Log.e(TAG, "Error while subscribe " + controlTopic, e);
                     }
@@ -108,10 +109,6 @@ class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttAct
     }
 
     private boolean prepareSending(String message, MessageType messageType, MqttAndroidClient client) throws MqttException {
-        if (client != null && !client.isConnected()) {
-            client.connect().waitForCompletion();
-        }
-
         boolean ready = client != null && client.isConnected();
 
         if (!ready) {
