@@ -1,14 +1,10 @@
-﻿using System;
+﻿using LogMe.Core;
 using System.Threading.Tasks;
 
 namespace LogMe
 {
-    internal interface IWorkerClient
+    internal interface IWorkerClient : IClient
     {
-        Task StartAsync();
-
-        Task StopAsync();
-
-        void Send(string message, MessageType messageType);
+        Task SendAsync(string message, MessageType messageType);
     }
 }

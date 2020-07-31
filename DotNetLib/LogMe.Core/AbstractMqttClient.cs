@@ -12,7 +12,7 @@ namespace LogMe.Core
 {
     public abstract class AbstractMqttClient : IClient, IConnectingFailedHandler, IMqttClientConnectedHandler, IMqttClientDisconnectedHandler
     {
-        private readonly string clientName;
+        private readonly string clientId;
         private readonly string url;
         private readonly ManualResetEvent startWaitEvent = new ManualResetEvent(false);
         private readonly ManualResetEvent stopWaitEvent = new ManualResetEvent(false);
@@ -21,9 +21,9 @@ namespace LogMe.Core
 
         protected IManagedMqttClient MqttClient => mqttClient;
 
-        public AbstractMqttClient(string clientName, string url)
+        public AbstractMqttClient(string clientId, string url)
         {
-            this.clientName = clientName;
+            this.clientId = clientId;
             this.url = url.ToLower();
         }
 
@@ -44,7 +44,7 @@ namespace LogMe.Core
             connectingFailedReason = null;
 
             var mqttClientOptions = new MqttClientOptionsBuilder()
-                .WithClientId(clientName)
+                .WithClientId(clientId)
                 .WithCleanSession();
             if (url.StartsWith("ws://"))
             {
@@ -64,9 +64,9 @@ namespace LogMe.Core
 
             return Task.Run(async () =>
             {
-                if (mqttClient != null)
-                    await mqttClient.StopAsync();
-                mqttClient = new MqttFactory().CreateManagedMqttClient();
+                if (this.mqttClient != null)
+                    await this.mqttClient.StopAsync();
+                var mqttClient = new MqttFactory().CreateManagedMqttClient();
                 mqttClient.UseApplicationMessageReceivedHandler(e =>
                 {
                     var msg = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
@@ -81,18 +81,20 @@ namespace LogMe.Core
                 startWaitEvent.WaitOne();
                 if (!string.IsNullOrEmpty(connectingFailedReason))
                     throw new LogMeException(connectingFailedReason);
+                this.mqttClient = mqttClient;
             });
         }
 
         public async Task StopAsync()
         {
             startWaitEvent?.Dispose();
+            var mqttClient = this.mqttClient;
             if (mqttClient != null)
             {
                 await mqttClient.StopAsync();
                 stopWaitEvent.WaitOne();
                 stopWaitEvent?.Dispose();
-                mqttClient = null;
+                this.mqttClient = null;
             }
         }
 

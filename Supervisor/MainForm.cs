@@ -119,6 +119,8 @@ namespace LogMe.Supervisor
 
                 if (command == Commands.TAKE_SCREENSHOT)
                 {
+                    if (string.IsNullOrEmpty(info))
+                        return;
                     var screenshotPreviewForm = new ScreenshotPreviewForm();
                     screenshotPreviewForm.Text = $"Screenshot from '{appName}'";
                     screenshotPreviewForm.SetScreenshot(info);

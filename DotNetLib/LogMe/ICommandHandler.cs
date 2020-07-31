@@ -1,6 +1,6 @@
 ﻿namespace LogMe
 {
-    internal interface CommandHandler
+    internal interface ICommandHandler
     {
         void HandleCommand(string command);
     }

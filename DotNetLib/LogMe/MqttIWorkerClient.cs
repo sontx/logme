@@ -1,101 +1,119 @@
-﻿using MQTTnet;
-using MQTTnet.Client.Connecting;
-using MQTTnet.Client.Disconnecting;
-using MQTTnet.Client.Options;
+﻿using LogMe.Core;
+using MQTTnet;
 using MQTTnet.Extensions.ManagedClient;
+using MQTTnet.Protocol;
 using System;
-using System.Text;
-using System.Threading;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace LogMe
 {
-    internal class MqttIWorkerClient : IWorkerClient, IConnectingFailedHandler, IMqttClientConnectedHandler, IMqttClientDisconnectedHandler
+    internal class MqttIWorkerClient : AbstractMqttClient, IWorkerClient
     {
-        private readonly string clientName;
-        private readonly string url;
-        private readonly string appName;
-        private readonly ManualResetEvent startWaitEvent = new ManualResetEvent(false);
-        private readonly ManualResetEvent stopWaitEvent = new ManualResetEvent(false);
-        private string connectingFailedReason;
-        private IManagedMqttClient mqttClient;
+        private readonly string pushLogTopic;
+        private readonly string exceptionTopic;
+        private readonly string controlTopic;
+        private readonly string controlResponseTopic;
+        private readonly Queue<PendingMessage> pendingMessageQueue = new Queue<PendingMessage>();
 
-        public MqttIWorkerClient(string clientName, string url, string appName)
+        public ICommandHandler CommandHandler { get; set; }
+
+        public MqttIWorkerClient(string clientId, string url, string appName)
+            : base(clientId, url)
         {
-            this.clientName = clientName;
-            this.url = url;
-            this.appName = appName;
+            pushLogTopic = string.Format(Constants.TOPIC_LOGS, appName);
+            exceptionTopic = string.Format(Constants.TOPIC_EXCEPTIONS, appName);
+            controlTopic = string.Format(Constants.TOPIC_CONTROLS, appName);
+            controlResponseTopic = string.Format(Constants.TOPIC_CONTROLS_RESPONSE, appName);
         }
 
-        public void Send(string message, MessageType messageType)
+        protected async override void OnConnected()
         {
-            throw new NotImplementedException();
-        }
-
-        public Task StartAsync()
-        {
-            connectingFailedReason = null;
-
-            var options = new ManagedMqttClientOptionsBuilder()
-            .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-            .WithClientOptions(new MqttClientOptionsBuilder()
-                .WithClientId(clientName)
-                .WithWebSocketServer(url)
-                .WithCleanSession()
-                .Build())
-            .Build();
-
-            return Task.Run(async () =>
+            base.OnConnected();
+            await MqttClient.SubscribeAsync(new MqttTopicFilter
             {
-                if (mqttClient != null)
-                    await mqttClient.StopAsync();
-                mqttClient = new MqttFactory().CreateManagedMqttClient();
+                Topic = controlTopic,
+                QualityOfServiceLevel = MqttQualityOfServiceLevel.AtMostOnce
+            });
+            await SendPendingMessages(MqttClient);
+        }
 
-                mqttClient.UseApplicationMessageReceivedHandler(e =>
+        protected override void OnReceivedMessage(string topic, string message, MqttApplicationMessageReceivedEventArgs rawArg)
+        {
+            base.OnReceivedMessage(topic, message, rawArg);
+            CommandHandler?.HandleCommand(message);
+        }
+
+        public async Task SendAsync(string message, MessageType messageType)
+        {
+            var client = this.MqttClient;
+
+            try
+            {
+                if (PrepareSending(message, messageType, client))
                 {
-                    var msg = Encoding.UTF8.GetString(e.ApplicationMessage.Payload);
-                    var topic = e.ApplicationMessage.Topic;
-                });
-                mqttClient.ConnectedHandler = this;
-                mqttClient.ConnectingFailedHandler = this;
-                mqttClient.DisconnectedHandler = this;
-                startWaitEvent.Reset();
-                await mqttClient.StartAsync(options);
-                startWaitEvent.WaitOne();
-                if (!string.IsNullOrEmpty(connectingFailedReason))
-                    throw new Exception(connectingFailedReason);
-            });
-        }
-
-        public Task StopAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task HandleConnectingFailedAsync(ManagedProcessFailedEventArgs eventArgs)
-        {
-            return Task.Run(() =>
+                    await SendPendingMessages(client);
+                    await SendImplAsync(message, messageType, client);
+                }
+            }
+            catch (Exception e)
             {
-                connectingFailedReason = eventArgs.Exception.Message;
-                startWaitEvent.Set();
-            });
+                throw new LogMeException("Error while sending '" + message + "' to " + pushLogTopic, e);
+            }
         }
 
-        public Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
+        private bool PrepareSending(String message, MessageType messageType, IManagedMqttClient client)
         {
-            return Task.Run(() =>
+            bool ready = client != null && client.IsConnected;
+
+            if (!ready)
             {
-                connectingFailedReason = null;
-                startWaitEvent.Set();
-            });
+                pendingMessageQueue.Enqueue(new PendingMessage(message, messageType));
+            }
+            return ready;
         }
 
-        public Task HandleDisconnectedAsync(MqttClientDisconnectedEventArgs eventArgs)
+        private async Task SendPendingMessages(IManagedMqttClient client)
         {
-            return Task.Run(() =>
+            while (pendingMessageQueue.Count > 0)
             {
-                stopWaitEvent.Set();
-            });
+                var pendingMessage = pendingMessageQueue.Dequeue();
+                await SendImplAsync(pendingMessage.Message, pendingMessage.MessageType, client);
+            }
+        }
+
+        private Task SendImplAsync(string message, MessageType messageType, IManagedMqttClient client)
+        {
+            var topic = GetTopicByMessageType(messageType);
+            return client.PublishAsync(topic, message, MqttQualityOfServiceLevel.AtMostOnce);
+        }
+
+        private string GetTopicByMessageType(MessageType messageType)
+        {
+            switch (messageType)
+            {
+                case MessageType.Log:
+                    return pushLogTopic;
+
+                case MessageType.Exception:
+                    return exceptionTopic;
+
+                case MessageType.ControlResponse:
+                    return controlResponseTopic;
+            }
+            return null;
+        }
+
+        private class PendingMessage
+        {
+            public string Message { get; }
+            public MessageType MessageType { get; }
+
+            public PendingMessage(string message, MessageType messageType)
+            {
+                this.Message = message;
+                this.MessageType = messageType;
+            }
         }
     }
 }

@@ -57,8 +57,8 @@ public final class LogMe implements CommandHandler {
                     String clientName = getClientId(appName);
                     MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(context, clientName, url, appName);
                     mqttIWorkerClient.setCommandHandler(this);
-                    workerClient = mqttIWorkerClient;
                     workerClient.start();
+                    workerClient = mqttIWorkerClient;
                 } catch (LogMeException e) {
                     Log.e(TAG, "Error while starting " + getClass().getName(), e);
                 }
@@ -71,7 +71,11 @@ public final class LogMe implements CommandHandler {
     public void stop() {
         Logger.setLogMe(null);
         try {
-            workerClient.stop();
+            WorkerClient workerClient = this.workerClient;
+            if (workerClient != null) {
+                workerClient.stop();
+                this.workerClient = null;
+            }
         } catch (LogMeException ignored) {
         }
     }
@@ -83,6 +87,7 @@ public final class LogMe implements CommandHandler {
     private void send(String msg, MessageType messageType) {
         executorService.execute(() -> {
             try {
+                WorkerClient workerClient = this.workerClient;
                 if (workerClient != null) {
                     workerClient.send(msg, messageType);
                 }
