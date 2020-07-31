@@ -24,7 +24,7 @@ namespace LogMe.Core
         public AbstractMqttClient(string clientName, string url)
         {
             this.clientName = clientName;
-            this.url = url;
+            this.url = url.ToLower();
         }
 
         protected virtual void OnConnected()
@@ -43,13 +43,23 @@ namespace LogMe.Core
         {
             connectingFailedReason = null;
 
+            var mqttClientOptions = new MqttClientOptionsBuilder()
+                .WithClientId(clientName)
+                .WithCleanSession();
+            if (url.StartsWith("ws://"))
+            {
+                var subUrl = url.Substring("ws://".Length);
+                mqttClientOptions.WithWebSocketServer(subUrl);
+            }
+            else
+            {
+                var subUrl = url.StartsWith("tcp://") ? url.Substring("tcp://".Length) : url;
+                mqttClientOptions.WithTcpServer(subUrl);
+            }
+
             var options = new ManagedMqttClientOptionsBuilder()
                 .WithAutoReconnectDelay(TimeSpan.FromSeconds(5))
-                .WithClientOptions(new MqttClientOptionsBuilder()
-                    .WithClientId(clientName)
-                    .WithWebSocketServer(url)
-                    .WithCleanSession()
-                    .Build())
+                .WithClientOptions(mqttClientOptions.Build())
                 .Build();
 
             return Task.Run(async () =>
