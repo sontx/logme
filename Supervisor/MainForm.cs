@@ -22,6 +22,8 @@ namespace LogMe.Supervisor
             waitHandleCommands.Add(Commands.TAKE_SCREENSHOT);
             txtAppName.Text = appSettings.AppName;
             txtServerAddress.Text = appSettings.ServerAddress;
+            chkTopMost.Checked = appSettings.TopMost;
+            TopMost = appSettings.TopMost;
         }
 
         protected override async void OnClosed(EventArgs e)
@@ -211,6 +213,7 @@ namespace LogMe.Supervisor
         private void chkTopMost_CheckedChanged(object sender, EventArgs e)
         {
             TopMost = chkTopMost.Checked;
+            appSettings.TopMost = TopMost;
         }
     }
 }

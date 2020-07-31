@@ -7,5 +7,6 @@ namespace LogMe.Supervisor
     {
         public string AppName { get; set; }
         public string ServerAddress { get; set; }
+        public bool TopMost { get; set; }
     }
 }
