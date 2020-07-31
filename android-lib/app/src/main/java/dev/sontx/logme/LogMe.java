@@ -57,7 +57,7 @@ public final class LogMe implements CommandHandler {
                     String clientName = getClientId(appName);
                     MqttIWorkerClient mqttIWorkerClient = new MqttIWorkerClient(context, clientName, url, appName);
                     mqttIWorkerClient.setCommandHandler(this);
-                    workerClient.start();
+                    mqttIWorkerClient.start();
                     workerClient = mqttIWorkerClient;
                 } catch (LogMeException e) {
                     Log.e(TAG, "Error while starting " + getClass().getName(), e);
