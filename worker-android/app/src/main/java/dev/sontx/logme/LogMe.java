@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -11,8 +11,8 @@ import android.util.Log;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import dev.sontx.logme.worker.uce.UCEDefaultActivity;
-import dev.sontx.logme.worker.uce.UCEHandler;
+import dev.sontx.logme.uce.UCEDefaultActivity;
+import dev.sontx.logme.uce.UCEHandler;
 
 public final class LogMe implements CommandHandler {
     private static final String TAG = LogMe.class.getName();

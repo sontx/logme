@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
@@ -6,7 +6,7 @@ import android.util.Log;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import dev.sontx.logme.worker.uce.UCEHandler;
+import dev.sontx.logme.uce.UCEHandler;
 
 public final class Logger {
     private static final String TAG = Logger.class.getName();

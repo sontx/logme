@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker.uce;
+package dev.sontx.logme.uce;
 
 import androidx.core.content.FileProvider;
 

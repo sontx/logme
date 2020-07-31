@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 interface Constants {
     String COMMAND_GET_SYSTEM_INFO = "GET_SYSTEM_INFO";

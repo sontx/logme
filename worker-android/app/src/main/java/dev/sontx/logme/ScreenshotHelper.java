@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 import android.app.Activity;
 import android.graphics.Bitmap;

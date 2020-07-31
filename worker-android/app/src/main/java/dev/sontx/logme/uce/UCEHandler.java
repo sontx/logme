@@ -15,7 +15,7 @@
  *  * limitations under the License.
  *
  */
-package dev.sontx.logme.worker.uce;
+package dev.sontx.logme.uce;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

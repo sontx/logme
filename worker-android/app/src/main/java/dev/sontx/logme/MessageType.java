@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 enum MessageType {
     Log,

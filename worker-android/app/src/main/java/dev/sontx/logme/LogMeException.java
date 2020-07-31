@@ -1,4 +1,4 @@
-package dev.sontx.logme.worker;
+package dev.sontx.logme;
 
 public class LogMeException extends Exception {
     public LogMeException(String message, Throwable cause) {
