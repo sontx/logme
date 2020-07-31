@@ -14,6 +14,8 @@ namespace Sample
         public MainForm()
         {
             InitializeComponent();
+            txtAppName.Text = Application.ProductName;
+            txtServerAddress.Text = "ws://mqtt.eclipse.org:80/mqtt";
             logMe = new LogMe("ws://mqtt.eclipse.org:80/mqtt");
         }
 
