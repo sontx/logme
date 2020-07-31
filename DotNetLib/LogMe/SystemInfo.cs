@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic.Devices;
+﻿using Blackcat.OS;
+using Microsoft.VisualBasic.Devices;
 using Microsoft.Win32;
 using System;
 using System.Globalization;
@@ -28,6 +29,13 @@ namespace LogMeLib
             builder.AppendLine(divider);
             builder.AppendLine("App name: " + GetAppName());
             builder.AppendLine("App version: " + GetFileVersion());
+
+            var processInfo = ProcessInfoUtils.GetProcessInfo();
+            builder.AppendLine("Arguments: " + processInfo.CommandLine);
+            builder.AppendLine("Executable path: " + processInfo.ExecutablePath);
+            builder.AppendLine("Current directory: " + Environment.CurrentDirectory);
+            builder.AppendLine("Running time: " + processInfo.RunningTime);
+            builder.AppendLine("Total memory used: " + processInfo.TotalMemoryUsed);
             return builder.ToString();
         }
 
