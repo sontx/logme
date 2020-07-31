@@ -4,7 +4,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     public partial class ScreenshotPreviewForm : Form
     {

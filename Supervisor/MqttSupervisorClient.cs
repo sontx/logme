@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     public class MqttSupervisorClient : ISupervisorClient, IConnectingFailedHandler, IMqttClientConnectedHandler, IMqttClientDisconnectedHandler
     {

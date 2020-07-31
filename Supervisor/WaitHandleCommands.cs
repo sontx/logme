@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     internal class WaitHandleCommands : IDisposable
     {

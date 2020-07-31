@@ -1,4 +1,4 @@
-﻿namespace Supervisor
+﻿namespace LogMe.Supervisor
 {
     internal static class Commands
     {

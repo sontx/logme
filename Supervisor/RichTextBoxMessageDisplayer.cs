@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     public class RichTextBoxMessageDisplayer : IMessageDisplayer
     {

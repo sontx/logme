@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     public interface ISupervisorClient
     {

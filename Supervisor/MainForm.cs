@@ -3,7 +3,7 @@ using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     public partial class MainForm : Form
     {

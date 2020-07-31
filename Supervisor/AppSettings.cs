@@ -1,6 +1,6 @@
 ﻿using Config4Net.Core;
 
-namespace Supervisor
+namespace LogMe.Supervisor
 {
     [Config("app")]
     internal class AppSettings
