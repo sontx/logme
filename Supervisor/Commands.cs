@@ -1,4 +1,4 @@
-﻿namespace Client
+﻿namespace Supervisor
 {
     internal static class Commands
     {

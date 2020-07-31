@@ -1,6 +1,6 @@
 ﻿using Config4Net.Core;
 
-namespace Client
+namespace Supervisor
 {
     [Config("app")]
     internal class AppSettings

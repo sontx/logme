@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Client
+namespace Supervisor
 {
     public partial class InfoForm : Form
     {

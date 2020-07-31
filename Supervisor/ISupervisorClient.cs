@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Client
+namespace Supervisor
 {
     public interface ISupervisorClient
     {
