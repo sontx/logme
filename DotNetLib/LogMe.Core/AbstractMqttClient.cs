@@ -82,6 +82,7 @@ namespace LogMe.Core
                 if (!string.IsNullOrEmpty(connectingFailedReason))
                     throw new LogMeException(connectingFailedReason);
                 this.mqttClient = mqttClient;
+                OnConnected();
             });
         }
 
@@ -109,7 +110,6 @@ namespace LogMe.Core
 
         public Task HandleConnectedAsync(MqttClientConnectedEventArgs eventArgs)
         {
-            OnConnected();
             return Task.Run(() =>
             {
                 connectingFailedReason = null;
