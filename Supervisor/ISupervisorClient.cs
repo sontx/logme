@@ -1,17 +1,14 @@
-﻿using System;
+﻿using LogMe.Core;
+using System;
 using System.Threading.Tasks;
 
 namespace LogMe.Supervisor
 {
-    public interface ISupervisorClient
+    public interface ISupervisorClient : IClient
     {
         Action<string> OnLog { get; set; }
         Action<string> OnException { get; set; }
         Action<string> OnControlResponse { get; set; }
-
-        Task StartAsync();
-
-        Task StopAsync();
 
         Task SendCommand(string command);
     }
