@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogMe", "DotNetLib\LogMe\Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LogMe.Core", "DotNetLib\LogMe.Core\LogMe.Core.csproj", "{B86714AB-F4D5-4774-AA57-A46D7FE6E4D4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "DotNetLib\Sample\Sample.csproj", "{C3E1790C-D026-4D7E-B4D7-C9F2322F6506}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{B86714AB-F4D5-4774-AA57-A46D7FE6E4D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B86714AB-F4D5-4774-AA57-A46D7FE6E4D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B86714AB-F4D5-4774-AA57-A46D7FE6E4D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C3E1790C-D026-4D7E-B4D7-C9F2322F6506}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C3E1790C-D026-4D7E-B4D7-C9F2322F6506}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C3E1790C-D026-4D7E-B4D7-C9F2322F6506}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C3E1790C-D026-4D7E-B4D7-C9F2322F6506}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
