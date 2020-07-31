@@ -1,4 +1,5 @@
-﻿using DeviceId;
+﻿using Blackcat.OS;
+using DeviceId;
 using System;
 using System.Threading.Tasks;
 
@@ -15,6 +16,7 @@ namespace LogMeLib
 
         private readonly string url;
         private IWorkerClient workerClient;
+        private AppCrash appCrash;
 
         public LogMe(string url)
         {
@@ -32,6 +34,12 @@ namespace LogMeLib
                     await workerClient.StopAsync();
                 }
 
+                appCrash = new AppCrash();
+                CrashReportWindow.AppCrash = appCrash;
+                CrashReportWindow.OnReport = HandleCrashReport;
+                appCrash.Register(typeof(CrashReportWindow));
+                appCrash.ProductName = SystemInfo.GetAppName();
+
                 var appName = SystemInfo.GetAppName();
                 var clientId = GetClientId(appName);
                 var mqttIWorkerClient = new MqttIWorkerClient(clientId, url, appName);
@@ -43,6 +51,13 @@ namespace LogMeLib
             {
                 Logger.E("Error while starting " + GetType().Name, ex);
             }
+        }
+
+        private async void HandleCrashReport(string report)
+        {
+            var appName = SystemInfo.GetAppName();
+            var wrap = $"{appName}\n{report}";
+            await SendImplAsync(wrap, MessageType.Exception);
         }
 
         private string GetClientId(string appName)
@@ -59,6 +74,8 @@ namespace LogMeLib
         public async Task StopAsync()
         {
             Logger.SetLogMe(null);
+            CrashReportWindow.AppCrash = null;
+            CrashReportWindow.OnReport = null;
 
             try
             {

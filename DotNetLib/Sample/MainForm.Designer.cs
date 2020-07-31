@@ -30,6 +30,7 @@
         {
             this.btnWriteRandomLog = new System.Windows.Forms.Button();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.btnFireAnException = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnWriteRandomLog
@@ -56,11 +57,22 @@
             this.textBox1.TabIndex = 1;
             this.textBox1.WordWrap = false;
             // 
+            // btnFireAnException
+            // 
+            this.btnFireAnException.Location = new System.Drawing.Point(172, 12);
+            this.btnFireAnException.Name = "btnFireAnException";
+            this.btnFireAnException.Size = new System.Drawing.Size(139, 23);
+            this.btnFireAnException.TabIndex = 2;
+            this.btnFireAnException.Text = "Fire An Exception";
+            this.btnFireAnException.UseVisualStyleBackColor = true;
+            this.btnFireAnException.Click += new System.EventHandler(this.btnFireAnException_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(414, 341);
+            this.Controls.Add(this.btnFireAnException);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.btnWriteRandomLog);
             this.Name = "MainForm";
@@ -74,6 +86,7 @@
 
         private System.Windows.Forms.Button btnWriteRandomLog;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Button btnFireAnException;
     }
 }
 

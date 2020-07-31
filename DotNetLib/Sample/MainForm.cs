@@ -52,5 +52,10 @@ namespace Sample
 
             textBox1.AppendText(msg + Environment.NewLine);
         }
+
+        private void btnFireAnException_Click(object sender, EventArgs e)
+        {
+            throw new Exception("This is an exception from " + Text);
+        }
     }
 }
