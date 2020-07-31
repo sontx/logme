@@ -35,7 +35,9 @@
             this.txtAppName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.chkTopMost = new System.Windows.Forms.CheckBox();
             this.btnScreenshot = new System.Windows.Forms.Button();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.btnSystemInfo = new System.Windows.Forms.Button();
             this.btnClear = new System.Windows.Forms.Button();
             this.btnConnect = new System.Windows.Forms.Button();
@@ -44,8 +46,6 @@
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.labStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.labLogsCount = new System.Windows.Forms.ToolStripStatusLabel();
-            this.chkTopMost = new System.Windows.Forms.CheckBox();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.statusStrip1.SuspendLayout();
@@ -108,6 +108,17 @@
             this.panel1.Size = new System.Drawing.Size(535, 159);
             this.panel1.TabIndex = 3;
             // 
+            // chkTopMost
+            // 
+            this.chkTopMost.AutoSize = true;
+            this.chkTopMost.Location = new System.Drawing.Point(15, 122);
+            this.chkTopMost.Name = "chkTopMost";
+            this.chkTopMost.Size = new System.Drawing.Size(71, 17);
+            this.chkTopMost.TabIndex = 3;
+            this.chkTopMost.Text = "Top Most";
+            this.chkTopMost.UseVisualStyleBackColor = true;
+            this.chkTopMost.CheckedChanged += new System.EventHandler(this.chkTopMost_CheckedChanged);
+            // 
             // btnScreenshot
             // 
             this.btnScreenshot.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -122,6 +133,16 @@
             this.btnScreenshot.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnScreenshot.UseVisualStyleBackColor = true;
             this.btnScreenshot.Click += new System.EventHandler(this.btnScreenshot_Click);
+            // 
+            // imageList1
+            // 
+            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageList1.Images.SetKeyName(0, "clear.png");
+            this.imageList1.Images.SetKeyName(1, "info.png");
+            this.imageList1.Images.SetKeyName(2, "screenshot.png");
+            this.imageList1.Images.SetKeyName(3, "stop.png");
+            this.imageList1.Images.SetKeyName(4, "start.png");
             // 
             // btnSystemInfo
             // 
@@ -212,27 +233,6 @@
             this.labLogsCount.Spring = true;
             this.labLogsCount.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
-            // chkTopMost
-            // 
-            this.chkTopMost.AutoSize = true;
-            this.chkTopMost.Location = new System.Drawing.Point(15, 122);
-            this.chkTopMost.Name = "chkTopMost";
-            this.chkTopMost.Size = new System.Drawing.Size(71, 17);
-            this.chkTopMost.TabIndex = 3;
-            this.chkTopMost.Text = "Top Most";
-            this.chkTopMost.UseVisualStyleBackColor = true;
-            this.chkTopMost.CheckedChanged += new System.EventHandler(this.chkTopMost_CheckedChanged);
-            // 
-            // imageList1
-            // 
-            this.imageList1.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageList1.ImageStream")));
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageList1.Images.SetKeyName(0, "clear.png");
-            this.imageList1.Images.SetKeyName(1, "info.png");
-            this.imageList1.Images.SetKeyName(2, "screenshot.png");
-            this.imageList1.Images.SetKeyName(3, "stop.png");
-            this.imageList1.Images.SetKeyName(4, "start.png");
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -241,10 +241,10 @@
             this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.statusStrip1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(551, 475);
             this.Name = "MainForm";
-            this.ShowIcon = false;
-            this.Text = "Supervisor - Client";
+            this.Text = "Supervisor";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
