@@ -26,7 +26,7 @@ public final class LogMe implements CommandHandler {
     private final ExecutorService executorService = Executors.newCachedThreadPool();
     private final Context context;
     private final String url;
-    private IWorkerClient workerClient;
+    private WorkerClient workerClient;
 
     public LogMe(Context context, String url) {
         this.context = context;

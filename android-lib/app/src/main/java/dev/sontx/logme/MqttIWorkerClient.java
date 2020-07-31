@@ -17,8 +17,8 @@ import java.util.Queue;
 
 import lombok.Setter;
 
-class MqttIWorkerClient implements IWorkerClient, IMqttMessageListener, IMqttActionListener {
-    private static final String TAG = IWorkerClient.class.getName();
+class MqttIWorkerClient implements WorkerClient, IMqttMessageListener, IMqttActionListener {
+    private static final String TAG = WorkerClient.class.getName();
 
     private final Context context;
     private final String clientName;
