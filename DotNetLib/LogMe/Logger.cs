@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace LogMe
+namespace LogMeLib
 {
     public sealed class Logger
     {

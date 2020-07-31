@@ -5,7 +5,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 
-namespace LogMe
+namespace LogMeLib
 {
     internal static class ScreenshotHelper
     {

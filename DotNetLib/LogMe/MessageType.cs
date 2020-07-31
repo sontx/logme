@@ -1,4 +1,4 @@
-﻿namespace LogMe
+﻿namespace LogMeLib
 {
     internal enum MessageType
     {

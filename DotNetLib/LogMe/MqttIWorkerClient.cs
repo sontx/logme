@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace LogMe
+namespace LogMeLib
 {
     internal class MqttIWorkerClient : AbstractMqttClient, IWorkerClient
     {

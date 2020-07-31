@@ -1,7 +1,7 @@
 ﻿using LogMe.Core;
 using System.Threading.Tasks;
 
-namespace LogMe
+namespace LogMeLib
 {
     internal interface IWorkerClient : IClient
     {

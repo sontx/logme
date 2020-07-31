@@ -2,10 +2,17 @@
 using System;
 using System.Threading.Tasks;
 
-namespace LogMe
+namespace LogMeLib
 {
     public sealed class LogMe : ICommandHandler
     {
+        public static async Task<LogMe> StartNewAsync(string url)
+        {
+            var logMe = new LogMe(url);
+            await logMe.StartAsync();
+            return logMe;
+        }
+
         private readonly string url;
         private IWorkerClient workerClient;
 
@@ -20,7 +27,10 @@ namespace LogMe
 
             try
             {
-                await StopAsync();
+                if (workerClient != null)
+                {
+                    await workerClient.StopAsync();
+                }
 
                 var appName = SystemInfo.GetAppName();
                 var clientId = GetClientId(appName);

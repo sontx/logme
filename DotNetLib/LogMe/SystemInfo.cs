@@ -8,7 +8,7 @@ using System.Management;
 using System.Reflection;
 using System.Text;
 
-namespace LogMe
+namespace LogMeLib
 {
     internal static class SystemInfo
     {
