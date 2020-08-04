@@ -72,7 +72,7 @@ namespace LogMe.Supervisor
         {
             await DoDisconnect();
             btnConnect.Enabled = false;
-            var appName = txtAppName.Text.Trim();
+            var appName = txtAppName.Text.Trim().Replace(" ", "");
             supervisorClient = new MqttSupervisorClient(appName, txtServerAddress.Text);
             supervisorClient.OnLog = HandleLog;
             supervisorClient.OnException = HandleException;
