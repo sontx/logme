@@ -1,6 +1,6 @@
 LogMe library for .Net Framework.
 
-[![](https://jitpack.io/v/sontx/logme.svg)](https://jitpack.io/#sontx/logme)
+Nuget [1.0.0](https://www.nuget.org/packages/LogMeLib/)
 
 Getting Started
 ====
