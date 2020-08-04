@@ -8,7 +8,6 @@ namespace Sample
     public partial class MainForm : Form
     {
         private readonly Random random = new Random(DateTime.Now.Millisecond);
-        private LogMe logMe;
         private int counter;
 
         public MainForm()
@@ -16,19 +15,6 @@ namespace Sample
             InitializeComponent();
             txtAppName.Text = Application.ProductName;
             txtServerAddress.Text = "ws://mqtt.eclipse.org:80/mqtt";
-            logMe = new LogMe("ws://mqtt.eclipse.org:80/mqtt");
-        }
-
-        protected override async void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            await logMe.StartAsync();
-        }
-
-        protected override async void OnClosed(EventArgs e)
-        {
-            base.OnClosed(e);
-            await logMe.StopAsync();
         }
 
         private void btnWriteRandomLog_Click(object sender, EventArgs e)
