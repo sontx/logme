@@ -20,6 +20,7 @@ Supervisor
 ---
 
 A simple Windows application which is used to show realtime logs and more.
+Download [here](https://github.com/sontx/logme/releases).
 
 ![Supervisor](https://github.com/sontx/logme/raw/master/images/supervisor.PNG)
 
